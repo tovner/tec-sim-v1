@@ -28,6 +28,7 @@ const state = {
   lowHeatSec: 0,
   overheatSec: 0,
   surplusSec: 0,
+  heat: 75,
   thermosAt: null,
   boilers: [
     { id: 1, name: 'Котел-1', power: 60, rad: 35, temp: 285, pressure: 8, water: 80, cooling: true, bad: 0 },
@@ -75,13 +76,16 @@ function turbineActual(t) {
   if (cap <= 0) return 0;
   return produceMW() * ((t.load / 100 * TURB_MAX) / cap);
 }
-function heatPct() {
+function heatTarget() {
   const prod = produceMW();
   const valveAvg = state.turbines.reduce((s, t) => s + t.valve, 0) / state.turbines.length / 100;
   const radAvg = state.boilers.reduce((s, b) => s + b.rad, 0) / state.boilers.length;
   const radFactor = 1 - radAvg / 250; // открытый радиатор отбирает тепло у домов
   if (state.demand <= 0) return 100;
   return Math.max(0, Math.min(100, (prod / state.demand) * valveAvg * radFactor * 100));
+}
+function heatPct() {
+  return state.heat; // сглаженное: дома остывают/греются постепенно
 }
 
 function log(msg) {
@@ -127,6 +131,8 @@ function tick() {
   }
 
   const prod = produceMW();
+  // Тепловая инерция домов: идут к цели постепенно (~15% в сек)
+  state.heat += (heatTarget() - state.heat) * 0.15;
   const heat = heatPct();
 
   state.noPowerSec = prod < NO_POWER_MW ? state.noPowerSec + 1 : 0;
@@ -330,6 +336,7 @@ function refresh() {
   const msgs = [];
   const badB = state.boilers.find(b => b.temp > BOOM_TEMP - 40 || b.pressure > BOOM_PRESS - 1.5 || b.water < 20);
   if (badB) msgs.push(`${badB.name}: перегрев / давление / мало воды!`);
+  if (steamMW() - turbCapMW() > 10) msgs.push(`Пар впустую: котлы дают ${Math.round(steamMW())} МВт, а турбины берут ${Math.round(turbCapMW())}. Подними нагрузку турбин!`);
   if (heat < HEAT_WARN_LOW) msgs.push(`Холодно: ${Math.round(heat)}% (ниже ${HEAT_WARN_LOW}%). Открой краны / подними мощность / прикрой радиаторы. До замерзания: ${LOW_HEAT_MAX - state.lowHeatSec} сек.`);
   if (heat > HEAT_WARN_HIGH) msgs.push(`Перетоп: ${Math.round(heat)}% (выше ${HEAT_WARN_HIGH}%). Прикрой краны / открой радиаторы. До беды: ${OVERHEAT_MAX - state.overheatSec} сек.`);
   if (prod < NO_POWER_MW) msgs.push(`Нет электричества: ${Math.round(prod)} МВт. До увольнения: ${NO_POWER_MAX - state.noPowerSec} сек.`);
