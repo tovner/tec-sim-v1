@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ТЭЦ Симулятор — смена</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>ТЭЦ — пульт смены</h1>
+  <nav>
+    <button id="tab-main" class="tab active">Главный экран</button>
+    <button id="tab-full" class="tab">Полное управление</button>
+    <button id="btn-pause">Пауза</button>
+    <button id="btn-help">Инструкция</button>
+    <button id="btn-restart">Заново</button>
+  </nav>
+</header>
+
+<main>
+  <div id="gameover" class="hidden">
+    <h2 id="go-title"></h2>
+    <p id="go-text"></p>
+    <button onclick="location.reload()">Начать заново</button>
+  </div>
+
+  <!-- Общие показатели -->
+  <section id="dashboard">
+    <div class="card metric"><span>Спрос</span><b id="m-demand">0 МВт</b></div>
+    <div class="card metric"><span>Выработка</span><b id="m-produce">0 МВт</b></div>
+    <div class="card metric"><span>Баланс</span><b id="m-balance">0</b></div>
+    <div class="card metric"><span>Тепло в домах</span><b id="m-heat">0%</b></div>
+    <div class="card metric"><span>Время смены</span><b id="m-time">00:00</b></div>
+  </section>
+
+  <div id="alarm" class="hidden"></div>
+  <div id="paused" class="hidden">Пауза — симуляция остановлена. Нажми «Продолжить» или Пробел.
+    <div class="row">
+      <button id="btn-extra">Дополнительные функции</button>
+    </div>
+    <div id="extra-menu" class="hidden">
+      <div class="row">
+        <button id="btn-quit">Уволиться</button>
+        <button id="btn-thermos">Набрать тяжелой воды в термос</button>
+      </div>
+    </div>
+  </div>
+  <div id="task" class="hidden"></div>
+
+  <!-- Экран 1: главный -->
+  <section id="screen-main" class="screen">
+    <h2>Главный котел (Котел-1)</h2>
+    <div id="main-boiler" class="card boiler"></div>
+    <div class="card">
+      <h3>Журнал</h3>
+      <div id="log-main" class="log"></div>
+    </div>
+  </section>
+
+  <!-- Экран 2: полное управление 60/40 -->
+  <section id="screen-full" class="screen hidden">
+    <h2>Полное управление</h2>
+    <div class="control-layout">
+      <div class="col-left">
+        <div class="card">
+          <h3>Котлы</h3>
+          <div id="boilers" class="stack"></div>
+        </div>
+      </div>
+      <div class="col-right">
+        <div class="card" id="heat-panel">
+          <h3>Тепло в домах</h3>
+          <div class="prod-line" id="heat-info">—</div>
+          <div>Подача тепла:<div class="bar"><div id="heat-bar"></div></div></div>
+        </div>
+        <div class="card">
+          <h3>Краны на отопление</h3>
+          <div id="valves" class="stack"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Журнал</h3>
+      <div id="log-full" class="log"></div>
+    </div>
+  </section>
+
+</main>
+
+<div id="help" class="hidden">
+  <div class="help-box">
+    <h2>Инструкция</h2>
+    <ul>
+      <li><b>Мощность котла</b> — сколько пара дает котел. Растут температура и давление.</li>
+      <li><b>Радиатор котла</b> — открытие в %. Сильнее открыт — котел лучше охлаждается и вода испаряется медленнее (доливать реже), но дома получают меньше тепла. Закрыт — вода греется и испаряется сильнее, доливать чаще.</li>
+      <li><b>Вода</b> — кнопка доливает +20%. Мало воды — перегрев и рост давления.</li>
+      <li><b>Охлаждение</b> — вкл/выкл. Выкл — температура растет быстрее.</li>
+      <li><b>Нагрузка турбины</b> (ползунок в карточке котла) — сколько пара турбина превращает в электричество. Выработка станции = минимум (пар котлов, мощность турбин).</li>
+      <li><b>Краны на отопление</b> (справа) — отбор тепла в дома. Среднее открытие кранов × выработка = тепло в домах.</li>
+      <li><b>Спрос / Выработка / Баланс</b> — держи выработку ≈ спросу.</li>
+      <li><b>Тепло</b> — норма 75%. Ниже 50% и выше 90% — предупреждение.</li>
+      <li><b>Пауза</b> — кнопка или Пробел. На паузе доступна кнопка «Дополнительные функции».</li>
+      <li><b>Проигрыш</b> — взрыв котла; нет электричества 10 сек; тепло ниже 50% дольше 15 сек; тепло 90–100% дольше 30 сек (сгорите); избыток выработки больше +30 МВт дольше 15 сек (молния).</li>
+    </ul>
+    <button id="btn-help-close">Закрыть</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

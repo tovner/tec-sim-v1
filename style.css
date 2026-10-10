@@ -1,0 +1,57 @@
+* { box-sizing: border-box; }
+body { font-family: system-ui, sans-serif; background: #10151c; color: #e8edf3; margin: 0; font-size: 14px; }
+header { padding: 8px 12px; background: #1a222e; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+h1 { font-size: 16px; margin: 0; }
+h2 { font-size: 16px; margin: 6px 0; }
+h3 { font-size: 14px; margin: 4px 0; }
+nav { display: flex; gap: 6px; flex-wrap: wrap; }
+.tab, #btn-restart, #btn-pause, #btn-help { background: #2a3546; color: #fff; border: 0; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+.tab.active { background: #3d7bff; }
+#btn-pause { background: #5a4a00; }
+main { padding: 10px; max-width: 1200px; margin: 0 auto; }
+#dashboard { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 8px; }
+.card { background: #1a222e; border-radius: 10px; padding: 8px 10px; }
+.card h3 { margin-top: 0; }
+.metric span { color: #93a1b5; font-size: 11px; }
+.metric b { display: block; font-size: 16px; margin-top: 2px; }
+.screen.hidden, .hidden { display: none; }
+/* Раскладка 60/40 */
+.control-layout { display: grid; grid-template-columns: 3fr 2fr; gap: 8px; margin-bottom: 8px; align-items: start; }
+.col-left { display: flex; flex-direction: column; gap: 8px; }
+.col-right { display: flex; flex-direction: column; gap: 8px; }
+.stack { display: flex; flex-direction: column; gap: 8px; }
+.stack .boiler, .stack .turbine { background: #232e3f; border-radius: 8px; padding: 8px; }
+@media (max-width: 800px) { .control-layout { grid-template-columns: 1fr; } #dashboard { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); } }
+.boiler label, .turbine label { display: block; margin: 4px 0; font-size: 13px; }
+/* Ползунки: компактные, но таскаются пальцем/курсором */
+.boiler input[type=range], .turbine input[type=range] {
+  width: 100%; height: 22px; cursor: pointer; touch-action: pan-y; accent-color: #3d7bff; margin: 0;
+}
+/* Датчики сверху, пульт снизу во всю ширину */
+.unit-grid { display: flex; flex-direction: column; gap: 6px; }
+.unit-grid .sensors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; background: #10151c; border-radius: 8px; padding: 6px 8px; font-size: 12px; }
+.unit-status .prod-line { margin: 0; }
+.controls { background: #10151c; border-radius: 8px; padding: 6px 8px; }
+@media (max-width: 520px) { .unit-grid .sensors { grid-template-columns: 1fr; } }
+.bar { height: 8px; background: #2a3546; border-radius: 6px; overflow: hidden; margin-top: 3px; }
+.bar > div { height: 100%; background: #3d7bff; }
+.bar.temp > div { background: #ff9f2e; }
+.bar.danger > div { background: #ff3b3b; }
+.row { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+.row button { background: #2a3546; color: #fff; border: 0; padding: 6px 9px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+.row button.on { background: #1f9d55; }
+#alarm { background: #ff3b3b; padding: 8px; border-radius: 10px; margin-bottom: 8px; font-weight: bold; font-size: 13px; }
+#paused { background: #2a3546; border: 1px dashed #ffcf40; padding: 8px; border-radius: 10px; margin-bottom: 8px; font-weight: bold; font-size: 13px; }
+.prod-line { background: #0f2733; border-radius: 8px; padding: 4px 8px; margin: 4px 0; font-size: 13px; }
+#task { background: #7a5a00; padding: 8px; border-radius: 10px; margin-bottom: 8px; font-size: 13px; }
+.log { max-height: 90px; overflow-y: auto; font-size: 12px; color: #b9c4d4; }
+#gameover { background: #1a222e; border: 2px solid #ff3b3b; border-radius: 12px; padding: 14px; margin-bottom: 10px; }
+#gameover.win { border-color: #22c55e; background: #dcfce7; color: #14532d; }
+#gameover h2 { margin-top: 0; }
+input[type=range]:disabled { opacity: .4; cursor: not-allowed; }
+button[data-act]:disabled { opacity: .4; cursor: not-allowed; }
+#help { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 10; }
+#help.hidden { display: none; }
+.help-box { background: #1a222e; border-radius: 12px; padding: 20px; max-width: 560px; max-height: 80vh; overflow-y: auto; }
+.help-box li { margin-bottom: 8px; font-size: 14px; }
+#btn-help-close { background: #3d7bff; color: #fff; border: 0; padding: 10px 16px; border-radius: 8px; cursor: pointer; }
